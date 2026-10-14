@@ -1,0 +1,68 @@
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,560;9..144,650&family=Noto+Sans+SC:wght@400;500;600;700&display=swap');
+
+:root {
+  --ink: #142822;
+  --ink-soft: #d7e4de;
+  --muted: #5b6f66;
+  --muted-soft: #8a9b93;
+  --surface: rgba(255, 255, 255, 0.78);
+  --line: #cfdad4;
+  --accent: #1a8c74;
+  --accent-deep: #0f5f52;
+  --user-bubble: #dceee7;
+  --source-bg: rgba(255, 255, 255, 0.55);
+  --shadow-soft: 0 8px 24px rgba(20, 40, 34, 0.05);
+  --shadow-lift: 0 14px 36px rgba(20, 40, 34, 0.08);
+
+  --sans: 'Noto Sans SC', 'PingFang SC', 'Hiragino Sans GB', sans-serif;
+  --display: 'Fraunces', 'Noto Serif SC', Georgia, serif;
+
+  font-family: var(--sans);
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--ink);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#app {
+  margin: 0;
+  min-height: 100%;
+}
+
+body {
+  min-height: 100svh;
+  background: #eef2f0;
+}
+
+#app {
+  min-height: 100svh;
+}
+
+button,
+textarea {
+  font: inherit;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: color-mix(in srgb, var(--muted) 35%, transparent);
+  border-radius: 999px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
