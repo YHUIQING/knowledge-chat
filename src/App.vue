@@ -1,35 +1,3 @@
-<script setup lang="ts">
-import { nextTick, ref, watch } from 'vue'
-import ChatInput from './components/ChatInput.vue'
-import MessageItem from './components/MessageItem.vue'
-import { useChat } from './composables/useChat'
-
-const {
-  messages,
-  input,
-  loading,
-  error,
-  isEmpty,
-  suggestedQuestions,
-  send,
-  stop,
-  clear,
-  askSuggested,
-} = useChat()
-
-const listRef = ref<HTMLElement | null>(null)
-
-watch(
-  messages,
-  async () => {
-    await nextTick()
-    const el = listRef.value
-    if (el) el.scrollTop = el.scrollHeight
-  },
-  { deep: true },
-)
-</script>
-
 <template>
   <div class="app-shell">
     <div class="ambient" aria-hidden="true" />
@@ -99,6 +67,38 @@ watch(
     </footer>
   </div>
 </template>
+
+<script setup lang="ts">
+import { nextTick, ref, watch } from 'vue'
+import ChatInput from './components/ChatInput.vue'
+import MessageItem from './components/MessageItem.vue'
+import { useChat } from './composables/useChat'
+
+const {
+  messages,
+  input,
+  loading,
+  error,
+  isEmpty,
+  suggestedQuestions,
+  send,
+  stop,
+  clear,
+  askSuggested,
+} = useChat()
+
+const listRef = ref<HTMLElement | null>(null)
+
+watch(
+  messages,
+  async () => {
+    await nextTick()
+    const el = listRef.value
+    if (el) el.scrollTop = el.scrollHeight
+  },
+  { deep: true },
+)
+</script>
 
 <style scoped>
 .app-shell {

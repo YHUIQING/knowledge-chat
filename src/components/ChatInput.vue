@@ -1,54 +1,13 @@
-<script setup lang="ts">
-import { nextTick, ref, watch } from 'vue'
-
-const props = defineProps<{
-  modelValue: string
-  loading: boolean
-  disabled?: boolean
-}>()
-
-const emit = defineEmits<{
-  'update:modelValue': [value: string]
-  send: []
-  stop: []
-}>()
-
-const textareaRef = ref<HTMLTextAreaElement | null>(null)
-
-function resize() {
-  const el = textareaRef.value
-  if (!el) return
-  el.style.height = 'auto'
-  el.style.height = `${Math.min(el.scrollHeight, 160)}px`
-}
-
-watch(
-  () => props.modelValue,
-  async () => {
-    await nextTick()
-    resize()
-  },
-)
-
-function onKeydown(e: KeyboardEvent) {
-  if (e.key === 'Enter' && !e.shiftKey) {
-    e.preventDefault()
-    if (!props.loading) emit('send')
-  }
-}
-</script>
-
 <template>
   <div class="composer">
     <label class="sr-only" for="chat-input">输入问题</label>
     <textarea
       id="chat-input"
       ref="textareaRef"
+      v-model="model"
       rows="1"
-      :value="modelValue"
       :disabled="disabled"
       placeholder="向知识库提问，例如：什么是 RAG？"
-      @input="emit('update:modelValue', ($event.target as HTMLTextAreaElement).value)"
       @keydown="onKeydown"
     />
 
@@ -64,13 +23,50 @@ function onKeydown(e: KeyboardEvent) {
       v-else
       type="button"
       class="composer__btn"
-      :disabled="disabled || !modelValue.trim()"
+      :disabled="disabled || !model.trim()"
       @click="emit('send')"
     >
       发送
     </button>
   </div>
 </template>
+
+<script setup lang="ts">
+import { nextTick, ref, watch } from 'vue'
+
+const model = defineModel<string>({ required: true })
+
+const props = defineProps<{
+  loading: boolean
+  disabled?: boolean
+}>()
+
+const emit = defineEmits<{
+  send: []
+  stop: []
+}>()
+
+const textareaRef = ref<HTMLTextAreaElement | null>(null)
+
+function resize() {
+  const el = textareaRef.value
+  if (!el) return
+  el.style.height = 'auto'
+  el.style.height = `${Math.min(el.scrollHeight, 160)}px`
+}
+
+watch(model, async () => {
+  await nextTick()
+  resize()
+})
+
+function onKeydown(e: KeyboardEvent) {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault()
+    if (!props.loading) emit('send')
+  }
+}
+</script>
 
 <style scoped>
 .composer {

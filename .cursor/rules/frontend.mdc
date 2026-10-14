@@ -1,0 +1,74 @@
+---
+description: Vue / TypeScript / CSS / JS 前端编码约定
+globs: "**/*.{vue,ts,tsx,js,mjs,cjs,css}"
+alwaysApply: false
+---
+
+# 前端编码约定
+
+本项目为 Vue 3 + TypeScript + Vite 知识库问答 Demo。修改相关文件时遵循以下约定。
+
+## Vue
+
+- 使用 `<script setup lang="ts">`，组件顺序固定为：`template` → `script` → `style`
+- 父子双向绑定优先 `defineModel`，不要手写 `modelValue` + `update:modelValue`
+- 可复用逻辑抽到 `src/composables/`；类型放 `src/types/`；接口/Mock 放 `src/services/`
+- 样式默认 `scoped`；全局变量与重置只写在 `src/style.css`
+- 模板文案使用简体中文；避免无意义的包装层和过度拆分
+
+```vue
+<!-- ✅ -->
+<template>...</template>
+<script setup lang="ts">
+const model = defineModel<string>({ required: true })
+</script>
+<style scoped>...</style>
+```
+
+## TypeScript
+
+- 开启严格类型，禁止无必要的 `any`；未知数据用 `unknown` 再收窄
+- 优先 `interface` 描述对象结构；联合类型用于角色、状态等枚举场景
+- 异步函数标明返回类型（如 `Promise<void>`）；可空值用 `?.` / `??`
+- 公共类型从 `src/types` 导出，避免在组件间复制类型定义
+
+```ts
+// ❌
+function parse(data: any) { return data.value }
+
+// ✅
+function parse(data: unknown): string {
+  if (typeof data === 'object' && data && 'value' in data) {
+    return String((data as { value: unknown }).value)
+  }
+  return ''
+}
+```
+
+## CSS
+
+- 颜色、字体、阴影使用 `src/style.css` 中的 CSS 变量（如 `--ink`、`--accent`），组件内不硬编码主题色
+- 布局优先 Flex / Grid；尺寸优先 `rem` / `%` / `svh`，避免魔法数字堆砌
+- 交互态补齐 `:hover` / `:disabled` / `:focus-visible`；动效保持短促（约 0.15–0.35s）
+- 不要引入默认紫渐变、深色模式优先、大面积卡片堆叠等模板化视觉
+
+```css
+/* ✅ */
+.btn {
+  color: var(--ink);
+  background: var(--accent);
+}
+```
+
+## JavaScript
+
+- 与 TS 文件同样的模块化与命名：`camelCase` 函数/变量，`PascalCase` 组件
+- 优先 `const` / `let`，禁止 `var`；异步用 `async/await`，避免裸嵌套 `.then`
+- 副作用（定时器、AbortController、事件监听）必须成对清理
+- 不要为 Demo 引入未使用的依赖；Mock 逻辑集中在 `src/services/`
+
+## 通用
+
+- 只改任务相关代码，不做无关重构与顺手「优化」
+- 用户可见文案、commit message 使用简体中文
+- 新增文件放入既有目录结构，命名与周边文件保持一致

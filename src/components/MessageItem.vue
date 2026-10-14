@@ -1,11 +1,3 @@
-<script setup lang="ts">
-import type { ChatMessage } from '../types/chat'
-
-defineProps<{
-  message: ChatMessage
-}>()
-</script>
-
 <template>
   <article
     class="message"
@@ -47,6 +39,14 @@ defineProps<{
     </div>
   </article>
 </template>
+
+<script setup lang="ts">
+import type { ChatMessage } from '../types/chat'
+
+defineProps<{
+  message: ChatMessage
+}>()
+</script>
 
 <style scoped>
 .message {
