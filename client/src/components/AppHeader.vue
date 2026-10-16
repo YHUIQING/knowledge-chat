@@ -11,21 +11,33 @@
       </div>
     </div>
 
-    <button
-      type="button"
-      class="ghost-btn"
-      :disabled="clearDisabled"
-      @click="emit('clear')"
-    >
-      清空对话
-    </button>
+    <nav class="nav" aria-label="主导航">
+      <RouterLink class="nav__link" to="/chat">对话</RouterLink>
+      <RouterLink class="nav__link" to="/upload">上传文档</RouterLink>
+      <button
+        v-if="showClear"
+        type="button"
+        class="ghost-btn"
+        :disabled="clearDisabled"
+        @click="emit('clear')"
+      >
+        清空对话
+      </button>
+    </nav>
   </header>
 </template>
 
 <script setup lang="ts">
-defineProps<{
-  clearDisabled: boolean
-}>()
+withDefaults(
+  defineProps<{
+    showClear?: boolean
+    clearDisabled?: boolean
+  }>(),
+  {
+    showClear: false,
+    clearDisabled: true,
+  },
+)
 
 const emit = defineEmits<{
   clear: []
@@ -97,6 +109,36 @@ const emit = defineEmits<{
   font-size: 12px;
   color: var(--muted);
   letter-spacing: 0.02em;
+}
+
+.nav {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.nav__link {
+  text-decoration: none;
+  color: var(--muted);
+  border: 1px solid transparent;
+  border-radius: 999px;
+  padding: 8px 14px;
+  font-size: 13px;
+  font-weight: 500;
+  transition: color 0.15s ease, background 0.15s ease, border-color 0.15s ease;
+}
+
+.nav__link:hover {
+  color: var(--ink);
+  background: color-mix(in srgb, var(--surface) 80%, transparent);
+}
+
+.nav__link.router-link-active {
+  color: var(--accent-deep);
+  border-color: color-mix(in srgb, var(--accent) 35%, var(--line));
+  background: color-mix(in srgb, var(--surface) 90%, transparent);
 }
 
 .ghost-btn {

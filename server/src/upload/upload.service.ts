@@ -18,6 +18,15 @@ export interface UploadParseResult {
   chunks: TextChunk[];
 }
 
+/** 将 Multer originalname 的错误编码还原为 UTF-8 */
+export function decodeOriginalName(name: string): string {
+  try {
+    return Buffer.from(name, 'latin1').toString('utf8');
+  } catch {
+    return name;
+  }
+}
+
 @Injectable()
 export class UploadService {
   private readonly logger = new Logger(UploadService.name);
@@ -29,7 +38,8 @@ export class UploadService {
       throw new BadRequestException('未收到文件内容');
     }
 
-    const filename = file.originalname || 'unnamed';
+    // Multer 常把 UTF-8 文件名按 latin1 解码，导致中文变成 å·¥ä½è®°å½.txt
+    const filename = decodeOriginalName(file.originalname || 'unnamed');
     const ext = this.getExt(filename);
     if (!ALLOWED_EXT.has(ext)) {
       throw new BadRequestException(

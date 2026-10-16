@@ -3,6 +3,7 @@
     <div class="ambient" aria-hidden="true" />
 
     <AppHeader
+      show-clear
       :clear-disabled="isEmpty && !loading"
       @clear="clear"
     />
