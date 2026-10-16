@@ -1,5 +1,6 @@
 import { computed, nextTick, ref } from 'vue'
-import { mockAsk, suggestedQuestions } from '../services/mockAgent'
+import { streamChat } from '../services/chatApi'
+import { suggestedQuestions } from '../services/mockAgent'
 import type { ChatMessage } from '../types/chat'
 
 function uid() {
@@ -41,9 +42,13 @@ export function useChat() {
     loading.value = true
     abortController = new AbortController()
 
+    const history = messages.value
+      .filter((m) => m.id !== assistantId && m.content)
+      .map((m) => ({ role: m.role, content: m.content }))
+
     try {
-      const result = await mockAsk(
-        content,
+      const answer = await streamChat(
+        history,
         (partial) => {
           const msg = messages.value.find((m) => m.id === assistantId)
           if (msg) msg.content = partial
@@ -53,8 +58,7 @@ export function useChat() {
 
       const msg = messages.value.find((m) => m.id === assistantId)
       if (msg) {
-        msg.content = result.answer
-        msg.sources = result.sources
+        msg.content = answer
         msg.streaming = false
       }
     } catch (e) {
@@ -65,7 +69,10 @@ export function useChat() {
           if (!msg.content) msg.content = '（已停止生成）'
         }
       } else {
-        error.value = '回答生成失败，请重试'
+        error.value =
+          e instanceof Error && e.message
+            ? e.message
+            : '回答生成失败，请重试'
         messages.value = messages.value.filter((m) => m.id !== assistantId)
       }
     } finally {
